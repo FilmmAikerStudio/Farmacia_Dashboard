@@ -10,13 +10,27 @@ import {
 } from 'recharts';
 import { getHeroMetrics, getFunnelData, getFinancialPerformance, getActivityLogs, getCampaignMetrics } from '../services/mockData';
 import { BentoCard, HeroMetric } from './BentoCard';
+import type { LiveHeroMetrics, LiveCampaignMetrics } from '../hooks/useApiData';
 
-const DashboardOverview: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
-  const metrics = getHeroMetrics('30d');
-  const campaign = getCampaignMetrics();
+interface DashboardOverviewProps {
+  darkMode: boolean;
+  heroMetrics?: LiveHeroMetrics;
+  campaignMetrics?: LiveCampaignMetrics;
+  isLive?: boolean;
+}
+
+const DashboardOverview: React.FC<DashboardOverviewProps> = ({
+  darkMode,
+  heroMetrics: liveHero,
+  campaignMetrics: liveCampaign,
+  isLive = false,
+}) => {
+  const metrics = liveHero ?? (getHeroMetrics('30d') as unknown as LiveHeroMetrics);
+  const campaign = liveCampaign ?? (getCampaignMetrics() as unknown as LiveCampaignMetrics);
   const funnelData = getFunnelData();
   const financialData = getFinancialPerformance();
   const logs = getActivityLogs();
+  void isLive; // available for future use
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">

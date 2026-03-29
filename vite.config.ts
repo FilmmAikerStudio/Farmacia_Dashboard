@@ -12,7 +12,15 @@ export default defineConfig(({ mode }) => {
       plugins: [react()],
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        // Meta
+        'import.meta.env.VITE_META_ACCESS_TOKEN': JSON.stringify(env.VITE_META_ACCESS_TOKEN),
+        'import.meta.env.VITE_META_PIXEL_ID': JSON.stringify(env.VITE_META_PIXEL_ID),
+        // Google
+        'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(env.VITE_GOOGLE_CLIENT_ID),
+        'import.meta.env.VITE_GA4_PROPERTY_ID': JSON.stringify(env.VITE_GA4_PROPERTY_ID ?? ''),
+        'import.meta.env.VITE_GMB_ACCOUNT_ID': JSON.stringify(env.VITE_GMB_ACCOUNT_ID ?? ''),
+        'import.meta.env.VITE_GMB_LOCATION_ID': JSON.stringify(env.VITE_GMB_LOCATION_ID ?? ''),
       },
       resolve: {
         alias: {

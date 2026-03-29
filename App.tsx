@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import DashboardOverview from './components/DashboardOverview';
-import { 
-  getSocialDetailedMetrics, 
-  getContentPerformance, 
-  getSEOKeywords, 
+import ApiStatusBar from './components/ApiStatusBar';
+import { useApiData } from './hooks/useApiData';
+import {
+  getContentPerformance,
+  getSEOKeywords,
   getFinancialPerformance,
   getSOPTasks,
   getActivityLogs
@@ -23,6 +24,21 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [darkMode, setDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    heroMetrics,
+    campaignMetrics,
+    socialMetrics,
+    isMetaConnected,
+    isGoogleConnected,
+    isMetaLoading,
+    isGoogleLoading,
+    metaError,
+    googleError,
+    signInGoogle,
+    signOutGoogle,
+    refreshMeta,
+  } = useApiData();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -48,15 +64,41 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     const animationClass = "animate-in fade-in slide-in-from-bottom-4 duration-500";
-    
+
+    const statusBar = (
+      <ApiStatusBar
+        isMetaConnected={isMetaConnected}
+        isGoogleConnected={isGoogleConnected}
+        isMetaLoading={isMetaLoading}
+        isGoogleLoading={isGoogleLoading}
+        metaError={metaError}
+        googleError={googleError}
+        onSignInGoogle={signInGoogle}
+        onSignOutGoogle={signOutGoogle}
+        onRefreshMeta={refreshMeta}
+        darkMode={darkMode}
+      />
+    );
+
     switch (activeTab) {
       case 'overview':
-        return <DashboardOverview darkMode={darkMode} />;
+        return (
+          <div>
+            {statusBar}
+            <DashboardOverview
+              darkMode={darkMode}
+              heroMetrics={heroMetrics}
+              campaignMetrics={campaignMetrics}
+              isLive={isMetaConnected}
+            />
+          </div>
+        );
       
       case 'social':
-        const socialMetrics = getSocialDetailedMetrics();
         return (
-          <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${animationClass}`}>
+          <div className={`space-y-6 ${animationClass}`}>
+            {statusBar}
+          <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6`}>
             {socialMetrics.map(m => (
               <BentoCard key={m.platform} darkMode={darkMode} className="flex flex-col h-full">
                 <div className="flex items-center justify-between mb-8">
@@ -91,6 +133,7 @@ const App: React.FC = () => {
                 </button>
               </BentoCard>
             ))}
+          </div>
           </div>
         );
 
